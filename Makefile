@@ -293,7 +293,7 @@ ${SVN_DIR}: ${SRC_DIR} ${DOWNLOAD_DIR}/${SVN_TARBALL} ${DOWNLOAD_DIR}/${SVN_PATH
 
 configure_svn: ${SVN_CONFIG_STATUS}
 
-${SVN_CONFIG_STATUS}: ${SVN_DIR} install_db install_apr install_apr_util
+${SVN_CONFIG_STATUS}: ${SVN_DIR} install_db install_apr install_apr_util install_neon
 	if [ ! -f ${SVN_CONFIG_STATUS} ]; then \
 		cd ${SVN_DIR}; \
 		export PATH=${MY_PATH}; \
@@ -380,7 +380,7 @@ ${RAPIDSVN_DIR}:
 
 configure_rapidsvn: ${RAPIDSVN_CONFIG_STATUS}
 
-${RAPIDSVN_CONFIG_STATUS}: ${RAPIDSVN_DIR} install_apr install_apr_util install_wxmac install_svn
+${RAPIDSVN_CONFIG_STATUS}: ${RAPIDSVN_DIR} install_svn install_wxmac
 	if [ ! -f ${RAPIDSVN_CONFIG_STATUS} ]; then \
 		cd ${RAPIDSVN_DIR}; \
 		export PATH=${MY_PATH}; \
@@ -399,8 +399,7 @@ ${RAPIDSVN_CONFIG_STATUS}: ${RAPIDSVN_DIR} install_apr install_apr_util install_
 
 build_rapidsvn: ${RAPIDSVN_BUILD_TARGET_FILE}
 
-${RAPIDSVN_BUILD_TARGET_FILE}: ${RAPIDSVN_CONFIG_STATUS} install_db \
-		install_apr install_apr_util install_neon install_svn install_wxmac
+${RAPIDSVN_BUILD_TARGET_FILE}: ${RAPIDSVN_CONFIG_STATUS}
 	if [ ! -f ${RAPIDSVN_BUILD_TARGET_FILE} ]; then \
 		cd ${RAPIDSVN_DIR}; \
 		${MAKE}; \
