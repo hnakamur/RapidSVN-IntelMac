@@ -7,9 +7,9 @@ with steps described in the RapidSVN "INSTALL" file.
 - apr-1.4.5
 - apr-util-1.3.12
 - neon-0.29.6
-- subversion-1.7.1 + unicode_path patch(*1)
+- subversion-1.7.2 + unicode_path patch(*1)
 - wxMac-2.8.12
-- rapidsvn-trunk
+- rapidsvn-trunk (r8226)
 
 It will make a 32-bit binary and libraries above are statically linked.
 
