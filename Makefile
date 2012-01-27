@@ -14,9 +14,10 @@ DB_BASENAME=db-4.8.30.NC
 APR_BASENAME=apr-1.4.5
 APR_UTIL_BASENAME=apr-util-1.3.12
 NEON_BASENAME=neon-0.29.6
-SVN_BASENAME=subversion-1.7.1
+SVN_BASENAME=subversion-1.7.2
 WXMAC_BASENAME=wxMac-2.8.12
 RAPIDSVN_BASENAME=rapidsvn-trunk
+SQLITE_BASENAME=sqlite-amalgamation-3071000
 
 DB_DIR=${SRC_DIR}/${DB_BASENAME}
 APR_DIR=${SRC_DIR}/${APR_BASENAME}
@@ -25,6 +26,7 @@ NEON_DIR=${SRC_DIR}/${NEON_BASENAME}
 SVN_DIR=${SRC_DIR}/${SVN_BASENAME}
 WXMAC_DIR=${SRC_DIR}/${WXMAC_BASENAME}
 RAPIDSVN_DIR=${SRC_DIR}/${RAPIDSVN_BASENAME}
+SQLITE_DIR=${SRC_DIR}/${SQLITE_BASENAME}
 
 DB_TARBALL=${DB_BASENAME}.tar.gz
 APR_TARBALL=${APR_BASENAME}.tar.bz2
@@ -33,6 +35,7 @@ NEON_TARBALL=${NEON_BASENAME}.tar.gz
 SVN_TARBALL=${SVN_BASENAME}.tar.bz2
 WXMAC_TARBALL=${WXMAC_BASENAME}.tar.gz
 SVN_PATH_PATCH=patch-path.c.diff
+SQLITE_ZIP=${SQLITE_BASENAME}.zip
 
 DB_TARBALL_URL=http://download.oracle.com/berkeley-db/${DB_TARBALL}
 APR_TARBALL_URL=http://www.apache.org/dist/apr/${APR_TARBALL}
@@ -42,6 +45,7 @@ SVN_TARBALL_URL=http://www.apache.org/dist/subversion/${SVN_TARBALL}
 WXMAC_TARBALL_URL=http://downloads.sourceforge.net/project/wxwindows/2.8.12/${WXMAC_TARBALL}
 SVN_PATH_PATCH_URL=http://trac.macports.org/browser/trunk/dports/devel/subversion/files/${SVN_PATH_PATCH}?format=txt
 RAPIDSVN_SOURCE_URL=http://rapidsvn.tigris.org/svn/rapidsvn/trunk
+SQLITE_ZIP_URL=http://www.sqlite.org/${SQLITE_ZIP}
 
 CURL=/usr/bin/curl -L
 MAKE=/usr/bin/make
@@ -268,6 +272,21 @@ distclean_neon:
 	${MAKE} distclean
 
 
+download_sqlite: ${DOWNLOAD_DIR}/${SQLITE_ZIP}
+
+${DOWNLOAD_DIR}/${SQLITE_ZIP}: ${DOWNLOAD_DIR}
+	if [ ! -f ${DOWNLOAD_DIR}/${SQLITE_ZIP} ]; then \
+		${CURL} ${SQLITE_ZIP_URL} -o ${DOWNLOAD_DIR}/${SQLITE_ZIP}; \
+	fi
+
+extract_sqlite: ${SQLITE_DIR}
+
+${SQLITE_DIR}: ${SRC_DIR} ${DOWNLOAD_DIR}/${SQLITE_ZIP}
+	if [ ! -d ${SQLITE_DIR} ]; then \
+    unzip ${DOWNLOAD_DIR}/${SQLITE_ZIP} -d ${SRC_DIR}; \
+	fi
+
+
 download_svn: ${DOWNLOAD_DIR}/${SVN_TARBALL}
 
 ${DOWNLOAD_DIR}/${SVN_TARBALL}: ${DOWNLOAD_DIR}
@@ -284,9 +303,11 @@ ${DOWNLOAD_DIR}/${SVN_PATH_PATCH}:
 
 extract_svn: ${SVN_DIR}
 
-${SVN_DIR}: ${SRC_DIR} ${DOWNLOAD_DIR}/${SVN_TARBALL} ${DOWNLOAD_DIR}/${SVN_PATH_PATCH}
+${SVN_DIR}: ${SRC_DIR} ${DOWNLOAD_DIR}/${SVN_TARBALL} ${DOWNLOAD_DIR}/${SVN_PATH_PATCH} ${SQLITE_DIR}
 	if [ ! -d ${SVN_DIR} ]; then \
 		tar jxf ${DOWNLOAD_DIR}/${SVN_TARBALL} -C ${SRC_DIR}; \
+    mkdir ${SVN_DIR}/sqlite-amalgamation; \
+    cp ${SQLITE_DIR}/sqlite3.c ${SVN_DIR}/sqlite-amalgamation/; \
 		cd ${SVN_DIR}; \
 		patch -p0 < ${DOWNLOAD_DIR}/${SVN_PATH_PATCH}; \
 	fi
